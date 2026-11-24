@@ -1694,7 +1694,11 @@ fn place_entities<W: PlacementContext>(
                 Tag::Byte(turn_facing_3d(f, mirror, rotation)),
             );
         }
-        if let Some(&Tag::Byte(f)) = nbt.get(&"facing".into()) {
+        let is_painting = matches!(
+            nbt.get(&"id".into()),
+            Some(Tag::String(id)) if id == "minecraft:painting" || id == "painting"
+        );
+        if is_painting && let Some(&Tag::Byte(f)) = nbt.get(&"facing".into()) {
             nbt.insert(
                 "facing".into(),
                 Tag::Byte(turn_facing_2d(f, mirror, rotation)),
@@ -2240,5 +2244,45 @@ mod tests {
             with_properties_of(&registry, "a:missing", BlockStateId(0)),
             None
         );
+    }
+
+    #[test]
+    fn turn_facing_3d_and_2d_rotate_before_mirror() {
+        // 3D: 2=north, 3=south, 4=west, 5=east; 0/1 and out-of-range pass through.
+        for (facing, mirror, rotation, expected) in [
+            (2, Mirror::None, Rotation::Clockwise90, 5),
+            (2, Mirror::LeftRight, Rotation::Clockwise90, 5),
+            (2, Mirror::None, Rotation::Clockwise180, 3),
+            (2, Mirror::None, Rotation::Counterclockwise90, 4),
+            (2, Mirror::LeftRight, Rotation::None, 3),
+            (5, Mirror::FrontBack, Rotation::None, 4),
+            (2, Mirror::FrontBack, Rotation::Clockwise90, 4), // N->E, then E->W
+            (0, Mirror::LeftRight, Rotation::Clockwise90, 0),
+            (1, Mirror::FrontBack, Rotation::Clockwise180, 1),
+            (9, Mirror::LeftRight, Rotation::Clockwise90, 9),
+        ] {
+            assert_eq!(
+                turn_facing_3d(facing, mirror, rotation),
+                expected,
+                "3d facing={facing} mirror={mirror:?} rot={rotation:?}"
+            );
+        }
+
+        // 2D: 0=south, 1=west, 2=north, 3=east.
+        for (facing, mirror, rotation, expected) in [
+            (2, Mirror::None, Rotation::Clockwise90, 3),
+            (2, Mirror::LeftRight, Rotation::Clockwise90, 3),
+            (2, Mirror::None, Rotation::Clockwise180, 0),
+            (2, Mirror::None, Rotation::Counterclockwise90, 1),
+            (2, Mirror::LeftRight, Rotation::None, 0),
+            (3, Mirror::FrontBack, Rotation::None, 1),
+            (-1, Mirror::LeftRight, Rotation::Clockwise90, -1),
+        ] {
+            assert_eq!(
+                turn_facing_2d(facing, mirror, rotation),
+                expected,
+                "2d facing={facing} mirror={mirror:?} rot={rotation:?}"
+            );
+        }
     }
 }
