@@ -133,7 +133,7 @@ PathBlock.canSurvive	port	crates/horizon-world/src/level/survive.rs::Sim::can_su
 PitcherCropBlock.makeShapes	skip:data	-	collision and outline shapes are precomputed from the data
 PitcherCropBlock.makeShapes	skip:data	-	collision and outline shapes are precomputed from the data
 PitcherCropBlock.getCollisionShape	skip:data	-	collision shape per state comes from the data table
-PitcherCropBlock.canSurvive	port	crates/horizon-world/src/level/survive.rs::Sim::can_survive_class
+PitcherCropBlock.updateShape	port	crates/horizon-world/src/level/shapes.rs::Sim::update_shape_class	-
 PitcherCropBlock.createBlockStateDefinition	skip:data	-	state properties come from the data tables
 PitcherCropBlock.entityInside	port	crates/horizon-client/src/mobs/ravager.rs::ai_step	ticked in #3516; `PitcherCropBlock.entityInside` is cited at crates/horizon-client/src/mobs/ravager.rs:136 (in a comment, so `where` names the enclosing fn)
 PitcherCropBlock.isRandomlyTicking	inline	crates/horizon-world/src/level/tick.rs::Sim::random_tick_block	the lower half and not max age test gates the pitcher arm
