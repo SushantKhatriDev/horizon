@@ -105,7 +105,7 @@ MultifaceBlock.removeFace	port	crates/horizon-world/src/level/sculk.rs::Sim::vei
 MultifaceBlock.getDefaultMultifaceState	skip:data	-	default state comes from the data tables
 MultifaceBlock.hasAnyFace	port	crates/horizon-world/src/level/sculk.rs::Sim::available_faces	the caller tests the list for emptiness
 MultifaceBlock.hasAnyVacantFace	inline	crates/horizon-world/src/level/sculk.rs::Sim::available_faces	vacancy is the list length below six at the caller
-MultifaceSpreader.canSpreadInAnyDirection	port	crates/horizon-world/src/level/bonemeal.rs::Sim::lichen_can_spread_in_any_direction
+MultifaceSpreader.canSpreadInAnyDirection	port	crates/horizon-world/src/level/bonemeal.rs::Sim::lichen_can_spread_in_any_direction	-
 MultifaceSpreader.spreadFromFaceTowardRandomDirection	port	crates/horizon-world/src/level/bonemeal.rs::Sim::lichen_spread_random	gap: minor: loops every starting face too; no fixed-face entry point
 MultifaceSpreader.spreadFromFaceTowardAllDirections	port	crates/horizon-world/src/level/sculk.rs::Sim::sculk_spread_all	gap: minor: sculk veins only; the lichen form is in lichen_spread_random
 MultifaceSpreader.spreadFromFaceTowardDirection	inline	crates/horizon-world/src/level/bonemeal.rs::Sim::lichen_spread_random	target search and placement folded into the lichen loop
