@@ -122,8 +122,8 @@ NetherPortalBlock.getExitPortal	port	crates/horizon-client/src/game/blocks/nethe
 NetherPortalBlock.getDimensionTransitionFromExit	port	crates/horizon-client/src/game/blocks/nether_portal.rs::Game::portal_plan	-
 NetherPortalBlock.animateTick	port	crates/horizon-client/src/animate_tick.rs::block_animate_tick	portal ambient sound and particles
 NetherPortalBlock.rotate	port	crates/horizon-world/src/worldgen/structure.rs::StateTransforms::rotate	axis swap through the rotate table
-NoteBlock.updateShape	port	crates/horizon-world/src/level/shapes.rs::Sim::update_shape_class	instrument follows the block below
-NoteBlock.neighborChanged	port	crates/horizon-world/src/level/redstone.rs::Sim::note_neighbor_changed
+NetherPortalBlock.rotate	port	crates/horizon-world/src/worldgen/structure.rs::StateTransforms::rotate	axis swap through the rotate table
+NoteBlock.updateShape	port	crates/horizon-world/src/level/shapes.rs::Sim::update_shape_class	-
 NoteBlock.getCustomSoundId	inline	crates/horizon-client/src/game.rs::Game::process_level_events
 NoteBlock.createBlockStateDefinition	skip:data	-	state properties come from the data tables
 PathBlock.getStateForPlacement	port	crates/horizon-world/src/level/place.rs::Sim::placement_class	pushes entities up when the path would not survive
