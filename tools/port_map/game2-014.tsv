@@ -81,7 +81,7 @@ Mirror.getRotation	inline	crates/horizon-world/src/worldgen/structure/processor.
 MossyCarpetBlock.makeShapes	skip:data	-	collision and outline shapes are precomputed from the data
 MossyCarpetBlock.getCollisionShape	skip:data	-	collision shape per state comes from the data table
 MossyCarpetBlock.canSurvive	port	crates/horizon-world/src/level/survive.rs::Sim::can_survive_class	base needs a non-air block below; a topper needs a moss carpet below
-MossyCarpetBlock.hasFaces	port	crates/horizon-world/src/level/shapes.rs::Sim::mossy_carpet_has_faces
+MossyCarpetBlock.hasFaces	port	crates/horizon-world/src/level/shapes.rs::Sim::mossy_carpet_has_faces	-
 MossyCarpetBlock.placeAt	port	crates/horizon-world/src/block_placement.rs::BlockPlacement::topper	carpet and topper placement for worldgen; the topper rule is shared
 MossyCarpetBlock.setPlacedBy	port	crates/horizon-world/src/level/place.rs::Sim::set_placed_by	gap: minor: the topper is placed above a new carpet; the placed-carpet update path is the same
 MossyCarpetBlock.updateShape	port	crates/horizon-world/src/level/shapes.rs::Sim::update_shape_class
