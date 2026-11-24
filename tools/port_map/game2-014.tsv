@@ -84,7 +84,7 @@ MossyCarpetBlock.canSurvive	port	crates/horizon-world/src/level/survive.rs::Sim:
 MossyCarpetBlock.hasFaces	port	crates/horizon-world/src/level/shapes.rs::Sim::mossy_carpet_has_faces	-
 MossyCarpetBlock.placeAt	port	crates/horizon-world/src/block_placement.rs::BlockPlacement::topper	carpet and topper placement for worldgen; the topper rule is shared
 MossyCarpetBlock.setPlacedBy	port	crates/horizon-world/src/level/place.rs::Sim::set_placed_by	gap: minor: the topper is placed above a new carpet; the placed-carpet update path is the same
-MossyCarpetBlock.updateShape	port	crates/horizon-world/src/level/shapes.rs::Sim::update_shape_class
+MossyCarpetBlock.updateShape	port	crates/horizon-world/src/level/shapes.rs::Sim::update_shape_class	-
 MossyCarpetBlock.createBlockStateDefinition	skip:data	-	state properties come from the data tables
 MossyCarpetBlock.rotate	port	crates/horizon-world/src/worldgen/structure.rs::StateTransforms::rotate	side properties through the rotate table
 MossyCarpetBlock.mirror	port	crates/horizon-world/src/worldgen/structure.rs::StateTransforms::mirror	side properties through the mirror table
