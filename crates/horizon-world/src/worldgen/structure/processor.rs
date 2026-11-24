@@ -1686,9 +1686,19 @@ fn place_entities<W: PlacementContext>(
             rot[0] = Tag::Float((rotated + mirrored - yaw).to_bits());
             nbt.insert("Rotation".into(), Tag::List(rot));
         }
-        // HangingEntity.rotate/mirror: the facing turns with the template.
+        // HangingEntity.rotate then HangingEntity.mirror: rotate first, then
+        // apply mirror's rotation on the rotated direction.
         if let Some(&Tag::Byte(f)) = nbt.get(&"Facing".into()) {
-            nbt.insert("Facing".into(), Tag::Byte(turn_facing(f, mirror, rotation)));
+            nbt.insert(
+                "Facing".into(),
+                Tag::Byte(turn_facing_3d(f, mirror, rotation)),
+            );
+        }
+        if let Some(&Tag::Byte(f)) = nbt.get(&"facing".into()) {
+            nbt.insert(
+                "facing".into(),
+                Tag::Byte(turn_facing_2d(f, mirror, rotation)),
+            );
         }
         if settings.finalize_entities {
             nbt.insert("horizon:finalize".into(), Tag::Byte(1));
@@ -1697,28 +1707,52 @@ fn place_entities<W: PlacementContext>(
     }
     Ok(())
 }
-/// A 3D data value (2 north, 3 south, 4 west, 5 east) mirrored then rotated.
-fn turn_facing(f: i8, mirror: Mirror, rotation: Rotation) -> i8 {
-    if !(2..=5).contains(&f) {
-        return f;
-    }
-    let mirrored = match (mirror, f) {
-        (Mirror::LeftRight, 2) => 3,
-        (Mirror::LeftRight, 3) => 2,
-        (Mirror::FrontBack, 4) => 5,
-        (Mirror::FrontBack, 5) => 4,
-        (_, f) => f,
-    };
-    // Clockwise order: north, east, south, west.
-    let order = [2, 5, 3, 4];
-    let i = order.iter().position(|&d| d == mirrored).unwrap_or(0);
-    let steps = match rotation {
+
+fn rotation_steps(rotation: Rotation) -> usize {
+    match rotation {
         Rotation::None => 0,
         Rotation::Clockwise90 => 1,
         Rotation::Clockwise180 => 2,
         Rotation::Counterclockwise90 => 3,
-    };
-    order[(i + steps) % 4]
+    }
+}
+
+/// A 3D data value (2 north, 3 south, 4 west, 5 east) rotated then mirrored.
+fn turn_facing_3d(f: i8, mirror: Mirror, rotation: Rotation) -> i8 {
+    if !(2..=5).contains(&f) {
+        return f;
+    }
+    // Clockwise order: north (2), east (5), south (3), west (4).
+    let cw = [2, 5, 3, 4];
+    let idx = cw.iter().position(|&d| d == f).unwrap_or(0);
+    let rotated = cw[(idx + rotation_steps(rotation)) % 4];
+
+    match (mirror, rotated) {
+        (Mirror::LeftRight, 2) => 3,
+        (Mirror::LeftRight, 3) => 2,
+        (Mirror::FrontBack, 4) => 5,
+        (Mirror::FrontBack, 5) => 4,
+        (_, d) => d,
+    }
+}
+
+/// A 2D painting facing value (0 south, 1 west, 2 north, 3 east) rotated then mirrored.
+fn turn_facing_2d(f: i8, mirror: Mirror, rotation: Rotation) -> i8 {
+    if !(0..=3).contains(&f) {
+        return f;
+    }
+    // Clockwise order for 2D values: south (0), west (1), north (2), east (3).
+    let cw = [0, 1, 2, 3];
+    let idx = cw.iter().position(|&d| d == f).unwrap_or(0);
+    let rotated = cw[(idx + rotation_steps(rotation)) % 4];
+
+    match (mirror, rotated) {
+        (Mirror::LeftRight, 0) => 2,
+        (Mirror::LeftRight, 2) => 0,
+        (Mirror::FrontBack, 1) => 3,
+        (Mirror::FrontBack, 3) => 1,
+        (_, d) => d,
+    }
 }
 
 /// StructureTemplate.updateShapeAtEdge over the placed positions' voxel
