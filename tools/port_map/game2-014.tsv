@@ -127,8 +127,8 @@ NoteBlock.updateShape	port	crates/horizon-world/src/level/shapes.rs::Sim::update
 NoteBlock.neighborChanged	port	crates/horizon-world/src/level/redstone.rs::Sim::note_neighbor_changed	-
 NoteBlock.createBlockStateDefinition	skip:data	-	state properties come from the data tables
 PathBlock.getStateForPlacement	port	crates/horizon-world/src/level/place.rs::Sim::placement_class	pushes entities up when the path would not survive
+PathBlock.getStateForPlacement	port	crates/horizon-world/src/level/place.rs::Sim::placement_class	pushes entities up when the path would not survive
 PathBlock.updateShape	port	crates/horizon-world/src/level/shapes.rs::Sim::update_shape_class	schedules a tick when the block above changes
-PathBlock.turnToBaseBlock	port	crates/horizon-world/src/level/tick.rs::Sim::turn_to_base_block
 PathBlock.canSurvive	port	crates/horizon-world/src/level/survive.rs::Sim::can_survive_class	solid block above turns the path back to dirt
 PitcherCropBlock.makeShapes	skip:data	-	collision and outline shapes are precomputed from the data
 PitcherCropBlock.getCollisionShape	skip:data	-	collision shape per state comes from the data table
