@@ -1696,7 +1696,8 @@ fn place_entities<W: PlacementContext>(
         }
         let is_painting = matches!(
             nbt.get(&"id".into()),
-            Some(Tag::String(id)) if id == "minecraft:painting" || id == "painting"
+            Some(Tag::String(id))
+                if matches!(id.to_string_lossy().as_str(), "minecraft:painting" | "painting")
         );
         if is_painting && let Some(&Tag::Byte(f)) = nbt.get(&"facing".into()) {
             nbt.insert(
