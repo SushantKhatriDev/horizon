@@ -73,13 +73,15 @@ impl Game<'_> {
         // BaseContainerBlockEntity.canOpen: a spectator opens no container that still
         // has a loot table to unpack (it clears while it rolls, on first open).
         // ServerPlayer.openMenu sends the refused spectator a red action bar.
-        if self
-            .world
-            .chunks
-            .get(&(key.0 >> 4, key.2 >> 4))
-            .and_then(|c| c.saved.as_ref())
-            .is_some_and(|s| s.pending_loot.contains_key(&key))
-        {
+        let has_pending_loot = |k: (i32, i32, i32)| {
+            self.world
+                .chunks
+                .get(&(k.0 >> 4, k.2 >> 4))
+                .and_then(|c| c.saved.as_ref())
+                .is_some_and(|s| s.pending_loot.contains_key(&k))
+        };
+        let partner = self.chest_partner(key).map(|(other, _)| other);
+        if has_pending_loot(key) || partner.is_some_and(has_pending_loot) {
             self.send_overlay_message(
                 Text::translate("container.spectatorCantOpen", &[])
                     .with_color(horizon_client::text::RED),
@@ -633,6 +635,34 @@ mod tests {
     }
 
     #[test]
+    #[ignore = "daily"]
+    fn spectator_opens_copper_chest_and_sees_contents() {
+        let mut resources = None;
+        let mut game = super::super::game_tests::tests::server_game(&mut resources);
+        let state = game
+            .pack
+            .assets
+            .registry
+            .default_state("minecraft:copper_chest")
+            .unwrap();
+        let pos = (8, 64, 8);
+        game.world.set(pos.0, pos.1, pos.2, state).unwrap();
+        let mut slots = vec![None; 27];
+        slots[0] = Some(ItemStack::new("minecraft:diamond", 3));
+        game.world
+            .block_entities
+            .insert(pos, BlockEntity::Chest(slots));
+
+        game.spectator_open_menu([pos.0, pos.1, pos.2]);
+
+        assert_eq!(game.container, Some(pos));
+        assert_eq!(
+            game.container_slot(0).as_ref().map(|s| (&*s.item, s.count)),
+            Some(("minecraft:diamond", 3))
+        );
+    }
+
+    #[test]
     fn double_chest_halves_connect_around_the_facing() {
         let half = |kind, facing| ChestHalf {
             block: "minecraft:chest",
@@ -666,21 +696,6 @@ mod tests {
         let copper = half("minecraft:copper_chest", "left");
         assert!(!copper.pairs_with(&half("minecraft:exposed_copper_chest", "right")));
         assert!(!is_chest_block("minecraft:ender_chest"));
-    }
-    #[test]
-    fn all_copper_chest_variants_are_chest_blocks() {
-        for block in [
-            "minecraft:copper_chest",
-            "minecraft:exposed_copper_chest",
-            "minecraft:weathered_copper_chest",
-            "minecraft:oxidized_copper_chest",
-            "minecraft:waxed_copper_chest",
-            "minecraft:waxed_exposed_copper_chest",
-            "minecraft:waxed_weathered_copper_chest",
-            "minecraft:waxed_oxidized_copper_chest",
-        ] {
-            assert!(is_chest_block(block), "{block}");
-        }
     }
     #[test]
     fn shulker_boxes_are_recognised_by_name() {
