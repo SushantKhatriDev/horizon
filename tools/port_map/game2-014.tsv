@@ -100,7 +100,7 @@ MultifaceBlock.isValidStateForPlacement	port	crates/horizon-world/src/level/scul
 MultifaceBlock.rotate	port	crates/horizon-world/src/worldgen/structure.rs::StateTransforms::rotate	face properties through the rotate table
 MultifaceBlock.mirror	port	crates/horizon-world/src/worldgen/structure.rs::StateTransforms::mirror	face properties through the mirror table
 MultifaceBlock.mapDirections	inline	crates/horizon-world/src/worldgen/structure.rs::StateTransforms::rotate	face property permutation is folded into the rotate table
-MultifaceBlock.hasFace	port	crates/horizon-world/src/level/survive.rs::Sim::multiface_has_face
+MultifaceBlock.hasFace	port	crates/horizon-world/src/level/survive.rs::Sim::multiface_has_face	-
 MultifaceBlock.removeFace	port	crates/horizon-world/src/level/sculk.rs::Sim::vein_with_face	gap: minor: clears the face only; the air result when no face is left is not here
 MultifaceBlock.getDefaultMultifaceState	skip:data	-	default state comes from the data tables
 MultifaceBlock.hasAnyFace	port	crates/horizon-world/src/level/sculk.rs::Sim::available_faces	the caller tests the list for emptiness
