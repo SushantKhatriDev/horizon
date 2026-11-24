@@ -1693,7 +1693,8 @@ fn place_entities<W: PlacementContext>(
         if let Some(first) = rot.first_mut() {
             *first = Tag::Float(new_yaw.to_bits());
         } else {
-            if let Some(first) = rot.first_mut() {             *first = Tag::Float(new_yaw.to_bits());         } else {             rot.push(Tag::Float(new_yaw.to_bits()));             rot.push(Tag::Float(0.0f32.to_bits()));         }
+            rot.push(Tag::Float(new_yaw.to_bits()));
+            rot.push(Tag::Float(0.0f32.to_bits()));
         }
         nbt.insert("Rotation".into(), Tag::List(rot));
         // HangingEntity.rotate/mirror: the facing turns with the template.
@@ -2217,5 +2218,63 @@ mod tests {
             with_properties_of(&registry, "a:missing", BlockStateId(0)),
             None
         );
+    }
+
+    /// Collects the entity NBT `place_entities` hands the world.
+    struct EntitySink(Vec<Compound>);
+    impl PlacementContext for EntitySink {
+        fn generation(&self) -> crate::worldgen::anchor::WorldGenerationContext {
+            crate::worldgen::anchor::WorldGenerationContext {
+                min_y: -64,
+                height: 384,
+                sea_level: 63,
+            }
+        }
+        fn min_y(&mut self) -> Result<i32, PlacementQueryError> {
+            Ok(-64)
+        }
+        fn height(&mut self, _: HeightmapType, _: i32, _: i32) -> Result<i32, PlacementQueryError> {
+            Err(PlacementQueryError::Unavailable)
+        }
+        fn add_entity(&mut self, nbt: Compound) -> Result<(), PlacementQueryError> {
+            self.0.push(nbt);
+            Ok(())
+        }
+    }
+
+    #[test]
+    fn template_entity_without_rotation_turns_from_yaw_zero() {
+        let mut template = StructureTemplate::empty();
+        let mut nbt = Compound::new();
+        nbt.insert("id".into(), Tag::String("minecraft:camel".into()));
+        template.entities.push(super::super::EntityInfo {
+            pos: [0.5, 0.0, 0.5],
+            block_pos: [0, 0, 0],
+            nbt,
+        });
+        let placed_rotation = |settings: PlaceSettings<'_>| {
+            let mut sink = EntitySink(Vec::new());
+            place_entities(&mut sink, &template, [0, 64, 0], &settings).unwrap();
+            let [entity] = &sink.0[..] else {
+                panic!("one entity placed, got {}", sink.0.len());
+            };
+            match entity.get(&"Rotation".into()) {
+                Some(Tag::List(rot)) => rot
+                    .iter()
+                    .map(|t| match t {
+                        Tag::Float(bits) => f32::from_bits(*bits),
+                        other => panic!("Rotation holds {other:?}"),
+                    })
+                    .collect::<Vec<_>>(),
+                other => panic!("Rotation is {other:?}"),
+            }
+        };
+        assert_eq!(
+            placed_rotation(PlaceSettings::new(Rotation::Clockwise90)),
+            [90.0, 0.0]
+        );
+        let mut mirrored = PlaceSettings::new(Rotation::None);
+        mirrored.mirror = Mirror::LeftRight;
+        assert_eq!(placed_rotation(mirrored), [180.0, 0.0]);
     }
 }
