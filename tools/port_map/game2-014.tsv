@@ -113,7 +113,7 @@ MultifaceSpreader.spreadToFace	inline	crates/horizon-world/src/level/bonemeal.rs
 MultifaceSpreader.DefaultSpreaderConfig.stateCanBeReplaced	inline	crates/horizon-world/src/level/bonemeal.rs::Sim::lichen_can_spread_into	air, same block or water source test folded into the lichen target check
 MultifaceSpreader.SpreadConfig.canSpreadFrom	inline	crates/horizon-world/src/level/bonemeal.rs::Sim::lichen_spread_target	from-face test folded into the lichen target search; the sculk form is worldgen/sculk.rs::SculkPatchFeature::can_spread_from
 MultifaceSpreader.SpreadConfig.placeBlock	inline	crates/horizon-world/src/level/bonemeal.rs::Sim::lichen_spread_random	placement folded into the lichen loop; the post-process mark is not kept
-MushroomBlock.randomTick	port	crates/horizon-world/src/level/tick.rs::Sim::mushroom_random_tick
+MushroomBlock.randomTick	port	crates/horizon-world/src/level/tick.rs::Sim::mushroom_random_tick	-
 MushroomBlock.canSpread	inline	crates/horizon-world/src/level/tick.rs::Sim::mushroom_random_tick	at most four of the same mushroom in the 9x3x9 box, counted in the tick
 MushroomBlock.isValidBonemealTarget	port	crates/horizon-world/src/level/bonemeal.rs::Sim::bonemeal_valid	mushroom arm
 NetherPortalBlock.updateShape	port	crates/horizon-world/src/level/shapes.rs::Sim::update_shape_class	portal breaks when the frame is incomplete
