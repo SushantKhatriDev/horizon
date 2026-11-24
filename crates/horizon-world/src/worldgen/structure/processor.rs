@@ -1656,7 +1656,7 @@ fn place_entities<W: PlacementContext>(
                 nbt.insert(key.into(), Tag::Int(block_pos[i]));
             }
         }
-        // Entity.rotate + Entity.mirror on the yaw.
+        // Entity.rotate + Entity.mirror on the yaw (defaulting missing Rotation to [0.0, 0.0]).
         let wrap = |a: f32| {
             let a = a % 360.0;
             if a >= 180.0 {
@@ -1667,25 +1667,35 @@ fn place_entities<W: PlacementContext>(
                 a
             }
         };
-        if let Some(Tag::List(rot)) = nbt.get(&"Rotation".into()).cloned()
-            && let Some(Tag::Float(bits)) = rot.first()
-        {
-            let yaw = wrap(f32::from_bits(*bits));
-            let rotated = match rotation {
-                Rotation::Clockwise180 => yaw + 180.0,
-                Rotation::Counterclockwise90 => yaw + 270.0,
-                Rotation::Clockwise90 => yaw + 90.0,
-                Rotation::None => yaw,
-            };
-            let mirrored = match mirror {
-                Mirror::FrontBack => -yaw,
-                Mirror::LeftRight => 180.0 - yaw,
-                Mirror::None => yaw,
-            };
-            let mut rot = rot.clone();
-            rot[0] = Tag::Float((rotated + mirrored - yaw).to_bits());
-            nbt.insert("Rotation".into(), Tag::List(rot));
+        let mut rot = match nbt.get(&"Rotation".into()).cloned() {
+            Some(Tag::List(existing)) => existing,
+            _ => vec![Tag::Float(0.0f32.to_bits()), Tag::Float(0.0f32.to_bits())],
+        };
+        let yaw = rot
+            .first()
+            .and_then(|tag| match tag {
+                Tag::Float(bits) => Some(wrap(f32::from_bits(*bits))),
+                _ => None,
+            })
+            .unwrap_or(0.0);
+        let rotated = match rotation {
+            Rotation::Clockwise180 => yaw + 180.0,
+            Rotation::Counterclockwise90 => yaw + 270.0,
+            Rotation::Clockwise90 => yaw + 90.0,
+            Rotation::None => yaw,
+        };
+        let mirrored = match mirror {
+            Mirror::FrontBack => -yaw,
+            Mirror::LeftRight => 180.0 - yaw,
+            Mirror::None => yaw,
+        };
+        let new_yaw = rotated + mirrored - yaw;
+        if let Some(first) = rot.first_mut() {
+            *first = Tag::Float(new_yaw.to_bits());
+        } else {
+            rot.push(Tag::Float(new_yaw.to_bits()));
         }
+        nbt.insert("Rotation".into(), Tag::List(rot));
         // HangingEntity.rotate/mirror: the facing turns with the template.
         if let Some(&Tag::Byte(f)) = nbt.get(&"Facing".into()) {
             nbt.insert("Facing".into(), Tag::Byte(turn_facing(f, mirror, rotation)));
@@ -1697,6 +1707,7 @@ fn place_entities<W: PlacementContext>(
     }
     Ok(())
 }
+
 /// A 3D data value (2 north, 3 south, 4 west, 5 east) mirrored then rotated.
 fn turn_facing(f: i8, mirror: Mirror, rotation: Rotation) -> i8 {
     if !(2..=5).contains(&f) {
