@@ -139,7 +139,8 @@ PitcherCropBlock.entityInside	port	crates/horizon-client/src/mobs/ravager.rs::ai
 PitcherCropBlock.isRandomlyTicking	inline	crates/horizon-world/src/level/tick.rs::Sim::random_tick_block	the lower half and not max age test gates the pitcher arm
 PitcherCropBlock.canGrowInto	port	crates/horizon-world/src/level/bonemeal.rs::Sim::pitcher_can_grow
 PitcherCropBlock.isLower	inline	crates/horizon-world/src/level/survive.rs::Sim::can_survive_class	lower-half test used by the survival check
-PitcherCropBlock.isMaxAge	port	crates/horizon-world/src/level/bonemeal.rs::Sim::crop_max_age
+PitcherCropBlock.isLower	inline	crates/horizon-world/src/level/survive.rs::Sim::can_survive_class	lower-half test used by the survival check
+PitcherCropBlock.isMaxAge	port	crates/horizon-world/src/level/bonemeal.rs::Sim::crop_max_age	-
 PitcherCropBlock.isValidBonemealTarget	port	crates/horizon-world/src/level/bonemeal.rs::Sim::bonemeal_valid	pitcher arm
 PitcherCropBlock.performBonemeal	port	crates/horizon-world/src/level/bonemeal.rs::Sim::perform_bonemeal	pitcher growth
 TestBlock.ownSignal	port	crates/horizon-client/src/game.rs::Game::block_entity_signal	the block state mode gates the block entity powered flag
