@@ -1693,7 +1693,7 @@ fn place_entities<W: PlacementContext>(
         if let Some(first) = rot.first_mut() {
             *first = Tag::Float(new_yaw.to_bits());
         } else {
-            rot.push(Tag::Float(new_yaw.to_bits()));
+            if let Some(first) = rot.first_mut() {             *first = Tag::Float(new_yaw.to_bits());         } else {             rot.push(Tag::Float(new_yaw.to_bits()));             rot.push(Tag::Float(0.0f32.to_bits()));         }
         }
         nbt.insert("Rotation".into(), Tag::List(rot));
         // HangingEntity.rotate/mirror: the facing turns with the template.
