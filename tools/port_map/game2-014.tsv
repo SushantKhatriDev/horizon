@@ -88,8 +88,8 @@ MossyCarpetBlock.updateShape	port	crates/horizon-world/src/level/shapes.rs::Sim:
 MossyCarpetBlock.createBlockStateDefinition	skip:data	-	state properties come from the data tables
 MossyCarpetBlock.rotate	port	crates/horizon-world/src/worldgen/structure.rs::StateTransforms::rotate	side properties through the rotate table
 MossyCarpetBlock.mirror	port	crates/horizon-world/src/worldgen/structure.rs::StateTransforms::mirror	side properties through the mirror table
-MossyCarpetBlock.isValidBonemealTarget	port	crates/horizon-world/src/level/bonemeal.rs::Sim::bonemeal_valid
-MossyCarpetBlock.performBonemeal	port	crates/horizon-world/src/level/bonemeal.rs::Sim::perform_bonemeal
+MossyCarpetBlock.isValidBonemealTarget	port	crates/horizon-world/src/level/bonemeal.rs::Sim::bonemeal_valid	-
+MossyCarpetBlock.performBonemeal	port	crates/horizon-world/src/level/bonemeal.rs::Sim::perform_bonemeal	-
 MultifaceBlock.makeShapes	skip:data	-	collision and outline shapes are precomputed from the data
 MultifaceBlock.createBlockStateDefinition	skip:data	-	state properties come from the data tables
 MultifaceBlock.updateShape	port	crates/horizon-world/src/level/shapes.rs::Sim::update_shape_class	removes a face that lost its neighbour, air when none left
