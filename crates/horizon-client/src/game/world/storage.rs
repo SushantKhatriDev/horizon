@@ -53,11 +53,10 @@ impl Game<'_> {
             .name
             .clone();
         let container = is_shulker_box(&name)
+            || is_chest_block(&name)
             || matches!(
                 name.trim_start_matches("minecraft:"),
-                "chest"
-                    | "trapped_chest"
-                    | "barrel"
+                "barrel"
                     | "hopper"
                     | "dispenser"
                     | "dropper"
@@ -667,6 +666,21 @@ mod tests {
         let copper = half("minecraft:copper_chest", "left");
         assert!(!copper.pairs_with(&half("minecraft:exposed_copper_chest", "right")));
         assert!(!is_chest_block("minecraft:ender_chest"));
+    }
+    #[test]
+    fn all_copper_chest_variants_are_chest_blocks() {
+        for block in [
+            "minecraft:copper_chest",
+            "minecraft:exposed_copper_chest",
+            "minecraft:weathered_copper_chest",
+            "minecraft:oxidized_copper_chest",
+            "minecraft:waxed_copper_chest",
+            "minecraft:waxed_exposed_copper_chest",
+            "minecraft:waxed_weathered_copper_chest",
+            "minecraft:waxed_oxidized_copper_chest",
+        ] {
+            assert!(is_chest_block(block), "{block}");
+        }
     }
     #[test]
     fn shulker_boxes_are_recognised_by_name() {
