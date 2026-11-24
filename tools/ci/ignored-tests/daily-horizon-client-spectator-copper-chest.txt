@@ -1,0 +1,2 @@
+# A spectator opens a copper chest and sees its contents, using prepared vanilla resources.
+horizon-client game::storage::tests::spectator_opens_copper_chest_and_sees_contents lib daily resources
